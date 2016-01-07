@@ -252,12 +252,15 @@ public class HibernateClassProperty extends BaseElement implements Comparable, I
 						if ((key.equals("alternate-key") && value.toUpperCase().startsWith("T"))
 								|| (key.equals("use-in-equals") && value.toUpperCase().startsWith("T"))) {
 							alternateKey = true;
-						}
-						if (key.equals("finder-method")) {
+						} else if (key.equals("finder-method")) {
 							finderMethod = value;
-						}
-						else if (key.equals("gen-property") && value.toUpperCase().startsWith("F")) {
+						} else if (key.equals("gen-property") && value.toUpperCase().startsWith("F")) {
 							throw new TransientPropertyException();
+						} else if (key.equals("type")) {
+							type = value;
+							if ((isManyToOne() || isOneToOne()) && null != packageName && type.indexOf(".") == -1) {
+								type = packageName + "." + type;
+							}
 						}
 					}
 				}

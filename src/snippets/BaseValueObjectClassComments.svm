@@ -10,5 +10,6 @@ $!class.getJavaDoc("class-description")
  *
  * @hibernate.class
  *  table="$!{class.TableName}"
+ * @time ${class.Time}
  */
 #end

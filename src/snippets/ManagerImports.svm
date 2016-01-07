@@ -1,0 +1,10 @@
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import ${class.AbsoluteDAOClassName};
+import ${class.AbsoluteManagerClassName};
+import ${class.AbsoluteValueObjectClassName};
+#if ($class.ParentRoot.Id)
+import ${class.ParentRoot.Id.Property.AbsoluteClassName};
+#end

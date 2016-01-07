@@ -1,0 +1,17 @@
+package ${package};
+
+import java.io.Serializable;
+
+${snippet.ManagerInterfaceImports}
+
+/**
+ * Manager(interface)
+ * build by HST(hibernate synchronizer tools by ydd)
+ * @time ${class.Time}
+ *
+ * #	<bean id="${class.ManagerName}" class="${class.AbsoluteManagerImplementName}"/>
+ */
+public interface ${class.ManagerInterfaceName} extends Serializable {
+
+${snippet.ManagerCustomInterfaceContents}
+}

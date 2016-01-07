@@ -1,0 +1,44 @@
+	private ${class.DAOClassName} dao;
+	
+	@Autowired
+	public void setDao(${class.DAOClassName} dao) {
+		this.dao = dao;
+	}
+	
+#if ($class.ParentRoot.Id)
+	/**
+	 * find bean by id
+	 * @param id
+	 * @return ${class.ValueObjectClassName}
+	 */
+	public ${class.ValueObjectClassName} findById( ${class.ParentRoot.Id.Property.ClassName} id ) {
+		return dao.findById( id );
+	}
+	
+	/**
+	 * delete bean by id
+	 * @param id
+	 * @return ${class.ValueObjectClassName}
+	 */
+	public ${class.ValueObjectClassName} deleteById( ${class.ParentRoot.Id.Property.ClassName} id ) {
+		return dao.deleteById( id );
+	}
+#end
+	
+	/**
+	 * delete bean by bean
+	 * @param bean
+	 * @return ${class.ValueObjectClassName}
+	 */
+	public ${class.ValueObjectClassName} delete( ${class.ValueObjectClassName} bean ) {
+		return dao.delete( bean );
+	}
+	
+	/**
+	 * save bean by bean
+	 * @param bean
+	 * @return ${class.ValueObjectClassName}
+	 */
+	public ${class.ValueObjectClassName} save( ${class.ValueObjectClassName} bean ) {
+		return dao.save( bean );
+	}

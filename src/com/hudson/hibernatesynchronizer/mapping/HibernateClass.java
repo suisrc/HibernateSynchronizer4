@@ -19,7 +19,14 @@ import com.hudson.hibernatesynchronizer.exceptions.AttributeNotSpecifiedExceptio
 import com.hudson.hibernatesynchronizer.exceptions.TransientPropertyException;
 import com.hudson.hibernatesynchronizer.util.HSUtil;
 
-
+/**
+ * HibernateClassProperty(child.getNodeName().equals("many-to-one"))
+ * ¡ý¡ý¡ý¡ý¡ý
+ * HibernateClassProperty(child.getNodeName().equals("many-to-one") || child.getNodeName().equals("any"))
+ * 
+ * @author hibernatesynchronizer
+ *
+ */
 public class HibernateClass extends BaseElement implements Comparable {
 	
 	public static final int TYPE_CLASS = 1;
@@ -48,6 +55,7 @@ public class HibernateClass extends BaseElement implements Comparable {
 	private List queries = new ArrayList();
 
 	private String daoPackage;
+	private String implementDaoPackage;
 	private String interfacePackage;
 	private String baseDAOPackage;
 	private String baseValueObjectPackage;
@@ -57,7 +65,12 @@ public class HibernateClass extends BaseElement implements Comparable {
 	private String rootDAOClassName;
 	private String absoluteRootDAOClassName;
 	
+	private String managerPackage;
+	private String implementManagerPackage;
+	private String interfaceManagerPackage;
+	
 	private boolean syncDAO = true;
+	private boolean syncManager = true;
 	private boolean syncValueObject = true;
 	private boolean syncCustom = true;
 	private int type;
@@ -150,15 +163,17 @@ public class HibernateClass extends BaseElement implements Comparable {
 							}
 							else if (key.equals("scope-class")) {
 								scope = value;
+							} else if(key.equals(Constants.PROP_SYNC_MNG) && value.toUpperCase().startsWith("F")) {
+								syncManager = false;
 							}
 						}
 					}
 				}
 				try {
 					if (child.getNodeName().equals("property")) {
-				        properties.add(new HibernateClassProperty(this, child));
+						properties.add(new HibernateClassProperty(this, child));
 					}
-					else if (child.getNodeName().equals("many-to-one")) {
+					else if (child.getNodeName().equals("many-to-one") || child.getNodeName().equals("any")) {
 						manyToOneList.add(new HibernateClassProperty(this, child, HibernateClassProperty.TYPE_MANY_TO_ONE, packageName));
 					}
 					else if (child.getNodeName().equals("one-to-one")) {
@@ -312,14 +327,21 @@ public class HibernateClass extends BaseElement implements Comparable {
 	 * Return the name without the package prefix of the base DAO class used as the SessionFactory wrapper
 	 */
 	public String getBaseDAOClassName () {
-		return "Base" + getValueObjectClassName() + "DAO";
+		return "Base" + getValueObjectClassName() + "Dao";
 	}
 
 	/**
 	 * Return the name without the package prefix of the extension DAO class used as the SessionFactory wrapper
 	 */
 	public String getDAOClassName () {
-		return getValueObjectClassName() + "DAO";
+		return getValueObjectClassName() + "Dao";
+	}
+
+	/**
+	 * Return the name without the package prefix of the extension DAO class used as the SessionFactory wrapper
+	 */
+	public String getDaoName () {
+		return HSUtil.firstLetterLower(getDAOClassName());
 	}
 
 	/**
@@ -333,7 +355,7 @@ public class HibernateClass extends BaseElement implements Comparable {
 	 * Return the name without the package prefix of the extension DAO class used as the SessionFactory wrapper
 	 */
 	public String getDAOInterfaceName () {
-		return getValueObjectClassName() + "DAO";
+		return getValueObjectClassName() + "Dao";
 	}
 
 	/**
@@ -341,6 +363,20 @@ public class HibernateClass extends BaseElement implements Comparable {
 	 */
 	public String getAbsoluteDAOInterfaceName () {
 		return getInterfacePackage() + "." + getDAOInterfaceName();
+	}
+
+	/**
+	 * Return the name without the package prefix of the extension DAO class used as the SessionFactory wrapper
+	 */
+	public String getDAOImplementName () {
+		return getValueObjectClassName() + "DaoImpl";
+	}
+
+	/**
+	 * Return the fully qualified class name of the DAO used for the hibernate persistance
+	 */
+	public String getAbsoluteDAOImplementName () {
+		return getImplementDaoPackage() + "." + getDAOImplementName();
 	}
 
 	/**
@@ -355,6 +391,55 @@ public class HibernateClass extends BaseElement implements Comparable {
 	 */
 	public String getAbsoluteBaseValueObjectClassName () {
 		return getBaseValueObjectPackage() + "." + getBaseValueObjectClassName();
+	}
+	
+	/**
+	 * Return the name without the package prefix of the extension DAO class used as the SessionFactory wrapper
+	 */
+	public String getManagerClassName () {
+		return getValueObjectClassName() + "Mng";
+	}
+	
+	/**
+	 * Return the name without the package prefix of the extension DAO class used as the SessionFactory wrapper
+	 */
+	public String getManagerName () {
+		return HSUtil.firstLetterLower(getManagerClassName());
+	}
+
+	/**
+	 * Return the fully qualified class name of the DAO used for the hibernate persistance
+	 */
+	public String getAbsoluteManagerClassName () {
+		return getManagerPackage() + "." + getManagerClassName();
+	}
+
+	/**
+	 * Return the name without the package prefix of the extension DAO class used as the SessionFactory wrapper
+	 */
+	public String getManagerInterfaceName () {
+		return getValueObjectClassName() + "Mng";
+	}
+
+	/**
+	 * Return the fully qualified class name of the DAO used for the hibernate persistance
+	 */
+	public String getAbsoluteManagerInterfaceName () {
+		return getInterfaceManagerPackage() + "." + getManagerInterfaceName();
+	}
+
+	/**
+	 * Return the name without the package prefix of the extension DAO class used as the SessionFactory wrapper
+	 */
+	public String getManagerImplementName () {
+		return getValueObjectClassName() + "MngImpl";
+	}
+
+	/**
+	 * Return the fully qualified class name of the DAO used for the hibernate persistance
+	 */
+	public String getAbsoluteManagerImplementName () {
+		return getImplementManagerPackage() + "." + getManagerImplementName();
 	}
 
 	/**
@@ -413,7 +498,8 @@ public class HibernateClass extends BaseElement implements Comparable {
 			}
 			else {
 				if (null == daoPackageName) daoPackageName = Constants.DEFAULT_DAO_PACKAGE;
-				daoPackage = HSUtil.addPackageExtension(getValueObjectPackage(), daoPackageName); 
+				String basePackage = HSUtil.getPackagePart(getValueObjectPackage());
+				daoPackage = HSUtil.addPackageExtension(basePackage, daoPackageName); 
 			}
 		}
 		return daoPackage;
@@ -424,6 +510,49 @@ public class HibernateClass extends BaseElement implements Comparable {
 			interfacePackage = getDAOPackage() + ".iface";
 		}
 		return interfacePackage;
+	}
+	
+	public String getImplementDaoPackage() {
+		if( null == implementDaoPackage ) {
+			implementDaoPackage = getDAOPackage() + ".impl";
+		}
+		return implementDaoPackage;
+	}
+
+	/**
+	 * Return the package prefix that relates to the extension DAO class used as the wrapper to the SessionFactory access
+	 */
+	public String getManagerPackage () {
+		if (null == managerPackage) {
+			String managerPackageStyle = Plugin.getProperty(project, Constants.PROP_MNG_PACKAGE_STYLE);
+			String managerPackageName = Plugin.getProperty(project, Constants.PROP_MNG_PACKAGE_NAME);
+			if (Constants.PROP_VALUE_SAME.equals(managerPackageStyle)) {
+				managerPackage = getValueObjectPackage();
+			}
+			else if (Constants.PROP_VALUE_ABSOLUTE.equals(managerPackageStyle)) {
+				if (null == managerPackageName) managerPackageName = Constants.DEFAULT_MNG_PACKAGE;
+				managerPackage = managerPackageName;
+			} else {
+				if (null == managerPackageName) managerPackageName = Constants.DEFAULT_MNG_PACKAGE;
+				String basePackage = HSUtil.getPackagePart(getValueObjectPackage());
+				managerPackage = HSUtil.addPackageExtension(basePackage, managerPackageName); 
+			}
+		}
+		return managerPackage;
+	}
+
+	public String getInterfaceManagerPackage () {
+		if (null == interfaceManagerPackage) {
+			interfaceManagerPackage = getManagerPackage() + ".iface";
+		}
+		return interfaceManagerPackage;
+	}
+	
+	public String getImplementManagerPackage() {
+		if( null == implementManagerPackage ) {
+			implementManagerPackage = getManagerPackage() + ".impl";
+		}
+		return implementManagerPackage;
 	}
 
 	/**
@@ -486,6 +615,13 @@ public class HibernateClass extends BaseElement implements Comparable {
 	 */
 	public String getVarName () {
 		return HSUtil.firstLetterLower(getValueObjectClassName());
+	}
+
+	/**
+	 * Return the time
+	 */
+	public String getTime () {
+		return new Date().toString();
 	}
 
 	/**
@@ -629,6 +765,13 @@ public class HibernateClass extends BaseElement implements Comparable {
 	 */
 	public boolean canSyncDAO() {
 		return syncDAO;
+	}
+
+	/**
+	 * @return true if this class is been allowed to auto-sync the related Manager class and false if not 
+	 */
+	public boolean canSyncManager() {
+		return syncManager;
 	}
 
 	/**

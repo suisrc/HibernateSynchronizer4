@@ -1,0 +1,29 @@
+#if ($class.ParentRoot.Id)
+	/**
+	 * find bean by id
+	 * @param id
+	 * @return ${class.ValueObjectClassName}
+	 */
+	public ${class.ValueObjectClassName} findById( ${class.ParentRoot.Id.Property.ClassName} id );
+	
+	/**
+	 * delete bean by id
+	 * @param id
+	 * @return ${class.ValueObjectClassName}
+	 */
+	public ${class.ValueObjectClassName} deleteById( ${class.ParentRoot.Id.Property.ClassName} id );
+#end
+	
+	/**
+	 * delete bean by bean
+	 * @param bean
+	 * @return ${class.ValueObjectClassName}
+	 */
+	public ${class.ValueObjectClassName} delete( ${class.ValueObjectClassName} bean );
+	
+	/**
+	 * save bean by bean
+	 * @param bean
+	 * @return ${class.ValueObjectClassName}
+	 */
+	public ${class.ValueObjectClassName} save( ${class.ValueObjectClassName} bean );

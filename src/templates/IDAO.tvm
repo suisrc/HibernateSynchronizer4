@@ -2,62 +2,65 @@ package ${package};
 
 import java.io.Serializable;
 
-public interface ${class.DAOInterfaceName} {
+import ${class.AbsoluteValueObjectClassName};
 #if ($class.ParentRoot.Id)
-	public ${class.AbsoluteValueObjectSignatureClassName} get(${class.ParentRoot.Id.Property.AbsoluteSignatureClassName} key)#if ($exceptionClass) throws ${exceptionClass}#end;
-
-	public ${class.AbsoluteValueObjectSignatureClassName} load(${class.ParentRoot.Id.Property.AbsoluteSignatureClassName} key)#if ($exceptionClass) throws ${exceptionClass}#end;
-#end
-#foreach ($prop in $class.AllProperties)
-#if ($prop.FinderMethod)
-
-	public java.util.List<${class.AbsoluteValueObjectSignatureClassName}> $prop.FinderMethod (${prop.AbsoluteSignatureClassName} ${prop.VarName});
-#end
+import ${class.ParentRoot.Id.Property.AbsoluteClassName};
 #end
 
-	public java.util.List<${class.AbsoluteValueObjectSignatureClassName}> findAll ();
+${snippet.DAOInterfaceImports}
+
+/**
+ * dao(interface)
+ * build by HST(hibernate synchronizer tools by ydd)
+ * @time ${class.Time}
+ * 
+ * #	<bean id="${class.DaoName}" class="${class.AbsoluteDAOImplementName}"/>
+ */
+public interface ${class.DAOInterfaceName} extends Serializable {
 
 #if ($class.ParentRoot.Id)
-
 	/**
-	 * Persist the given transient instance, first assigning a generated identifier. (Or using the current value
-	 * of the identifier property if the assigned generator is used.) 
-	 * @param ${class.VarName} a transient instance of a persistent class 
-	 * @return the class identifier
+	 * find bean by id
+	 * @param id
+	 * @return ${class.ValueObjectClassName}
 	 */
-	public ${class.ParentRoot.Id.Property.ObjectClass} save(${class.AbsoluteValueObjectSignatureClassName} ${class.VarName})#if ($exceptionClass) throws ${exceptionClass}#end;
+	public ${class.ValueObjectClassName} findById( ${class.ParentRoot.Id.Property.ClassName} id );
+	
+	/**
+	 * delete bean by id
+	 * @param id
+	 * @return ${class.ValueObjectClassName}
+	 */
+	public ${class.ValueObjectClassName} deleteById( ${class.ParentRoot.Id.Property.ClassName} id );
 #end
-
+	
 	/**
-	 * Either save() or update() the given instance, depending upon the value of its identifier property. By default
-	 * the instance is always saved. This behaviour may be adjusted by specifying an unsaved-value attribute of the
-	 * identifier property mapping. 
-	 * @param ${class.VarName} a transient instance containing new or updated state 
+	 * delete bean by bean
+	 * @param bean
+	 * @return ${class.ValueObjectClassName}
 	 */
-	public void saveOrUpdate(${class.AbsoluteValueObjectSignatureClassName} ${class.VarName})#if ($exceptionClass) throws ${exceptionClass}#end;
-
+	public ${class.ValueObjectClassName} delete( ${class.ValueObjectClassName} bean );
+	
 	/**
-	 * Update the persistent state associated with the given identifier. An exception is thrown if there is a persistent
-	 * instance with the same identifier in the current session.
-	 * @param ${class.VarName} a transient instance containing updated state
+	 * save bean by bean
+	 * @param bean
+	 * @return ${class.ValueObjectClassName}
 	 */
-	public void update(${class.AbsoluteValueObjectSignatureClassName} ${class.VarName})#if ($exceptionClass) throws ${exceptionClass}#end;
-#if ($class.ParentRoot.Id && $class.ParentRoot.Id.hasExternalClass())
-
+	public ${class.ValueObjectClassName} save( ${class.ValueObjectClassName} bean );
+	
 	/**
-	 * Remove a persistent instance from the datastore. The argument may be an instance associated with the receiving
-	 * Session or a transient instance with an identifier associated with existing persistent state. 
-	 * @param id the instance ID to be removed
+	 * update bean by bean
+	 * @param bean
+	 * @return ${class.ValueObjectClassName}
 	 */
-	public void delete(${class.ParentRoot.Id.Property.AbsoluteClassName} id)#if ($exceptionClass) throws ${exceptionClass}#end;
-#end
-
+	public ${class.ValueObjectClassName} update( ${class.ValueObjectClassName} bean );
+	
 	/**
-	 * Remove a persistent instance from the datastore. The argument may be an instance associated with the receiving
-	 * Session or a transient instance with an identifier associated with existing persistent state. 
-	 * @param ${class.VarName} the instance to be removed
+	 * save or update bean by bean
+	 * @param bean
+	 * @return ${class.ValueObjectClassName}
 	 */
-	public void delete(${class.AbsoluteValueObjectSignatureClassName} ${class.VarName})#if ($exceptionClass) throws ${exceptionClass}#end;
+	public ${class.ValueObjectClassName} saveOrUpdate( ${class.ValueObjectClassName} bean );
 
 ${snippet.DAOCustomInterfaceContents}
 }

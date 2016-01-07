@@ -32,6 +32,7 @@ public class SnippetTreeViewerLabelProvider extends LabelProvider {
 			else if (name.startsWith("BaseValueObject")) return HSUtil.getPropDescription(name.substring(15, name.length()));
 			else if (name.startsWith("RootDAO")) return HSUtil.getPropDescription(name.substring(7, name.length()));
 			else if (name.startsWith("DAO")) return HSUtil.getPropDescription(name.substring(3, name.length()));
+			else if (name.startsWith("Manager")) return HSUtil.getPropDescription(name.substring(7, name.length()));
 			else return name;
 		}
 		else return super.getText(element);

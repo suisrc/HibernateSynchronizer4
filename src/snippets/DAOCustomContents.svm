@@ -1,0 +1,3 @@
+	public Class<${class.ValueObjectClassName}> getEntityClass() {
+		return ${class.ValueObjectClassName}.class;
+	}

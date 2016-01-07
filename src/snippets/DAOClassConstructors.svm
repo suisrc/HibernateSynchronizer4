@@ -1,5 +1,0 @@
-	public ${class.DAOClassName} () {}
-	
-	public ${class.DAOClassName} (Session session) {
-		super(session);
-	}

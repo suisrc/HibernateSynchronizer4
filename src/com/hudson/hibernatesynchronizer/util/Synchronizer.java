@@ -89,6 +89,8 @@ public class Synchronizer implements IWorkspaceRunnable {
 	public static final String TEMPLATE_DAO = "DAO";
 	public static final String TEMPLATE_IDAO = "IDAO";
 	public static final String TEMPLATE_SPRING_CONFIG = "SpringConfig";
+	public static final String TEMPLATE_MNG = "Manager";
+	public static final String TEMPLATE_IMNG = "IManager";
 	
 	public static final String EXTENSION_JAVA = ".java";
 	
@@ -109,6 +111,7 @@ public class Synchronizer implements IWorkspaceRunnable {
 	private IJavaProject javaProject;
 	boolean valueObjectGenerationEnabled;
 	boolean daoGenerationEnabled;
+	boolean managerGenerationEnabled;
 	boolean customGenerationEnabled;
 
 	public Synchronizer (
@@ -145,6 +148,7 @@ public class Synchronizer implements IWorkspaceRunnable {
 			javaProject = JavaCore.create(documents[0].getFile().getProject());
 			valueObjectGenerationEnabled = Plugin.getBooleanProperty(javaProject.getProject(), Constants.PROP_GENERATION_VALUE_OBJECT_ENABLED, true);
 			daoGenerationEnabled = Plugin.getBooleanProperty(javaProject.getProject(), Constants.PROP_GENERATION_DAO_ENABLED, true);
+			managerGenerationEnabled = Plugin.getBooleanProperty(javaProject.getProject(), Constants.PROP_GENERATION_MNG_ENABLED, true);
 			customGenerationEnabled = Plugin.getBooleanProperty(javaProject.getProject(), Constants.PROP_GENERATION_CUSTOM_ENABLED, true);
 		}
 	}
@@ -204,7 +208,8 @@ public class Synchronizer implements IWorkspaceRunnable {
 				for (Iterator iter=hd.getClasses().iterator(); iter.hasNext(); ) {
 					if (null == progressMonitor || !progressMonitor.isCanceled()) {
 						HibernateClass hc = (HibernateClass) iter.next();
-						synchronizeClass(javaProject, hc, valueObjectGenerationEnabled, daoGenerationEnabled, customGenerationEnabled, hd.getFile().getName(), context, force, hd.getFile(), progressMonitor, shell);
+						synchronizeClass(javaProject, hc, valueObjectGenerationEnabled, daoGenerationEnabled,managerGenerationEnabled, customGenerationEnabled, 
+								hd.getFile().getName(), context, force, hd.getFile(), progressMonitor, shell);
 						long freeMemory = Runtime.getRuntime().freeMemory();
 						if (freeMemory < 2000000) {
 							// we need to clean up to keep going
@@ -438,6 +443,7 @@ public class Synchronizer implements IWorkspaceRunnable {
 			HibernateClass hc,
 			boolean valueObjectGenerationEnabled,
 			boolean daoGenerationEnabled,
+			boolean managerGenerationEnabled,
 			boolean customGenerationEnabled,
 			String currentFileName,
 			Context context,
@@ -471,8 +477,7 @@ public class Synchronizer implements IWorkspaceRunnable {
 				else if (rtn == DIRECTIVE_STOP_PROCESSING_GLOBAL) return false;
 			}
 		}
-		catch (Exception e)
-		{}
+		catch (Exception e){}
 		if (null != monitor && monitor.isCanceled()) return false;
 
 		try {
@@ -553,27 +558,24 @@ public class Synchronizer implements IWorkspaceRunnable {
 				context.put(PARAM_CLASS, hc);
 				if (null != monitor) {
 					if (monitor.isCanceled()) return false;
-					monitor.subTask(currentFileName + ": generating root DAO");
-					
-				}
-				if (!hc.useCustomDAO()) {
-					generateClassFile(TEMPLATE_BASE_ROOT_DAO, context, root, hc.getBaseDAOPackage(), hc.getBaseRootDAOClassName(), true);
-				}
-				generateClassFile(TEMPLATE_ROOT_DAO, context, root, hc.getRootDAOPackage(), hc.getRootDAOClassName(), false);
-				if (null != monitor) {
-					if (monitor.isCanceled()) return false;
-					monitor.worked(1);
-					monitor.subTask(currentFileName + ": generating base DAO");
-					monitor.worked(1);
-				}
-				generateClassFile(TEMPLATE_BASE_DAO, context, root, hc.getBaseDAOPackage(), hc.getBaseDAOClassName(), true);
-				if (null != monitor) {
-					if (monitor.isCanceled()) return false;
 					monitor.worked(1);
 					monitor.subTask(currentFileName + ": generating extension DAO");
 				}
-				generateClassFile(TEMPLATE_DAO, context, root, hc.getDAOPackage(), hc.getDAOClassName(), false);
-				generateClassFile(TEMPLATE_IDAO, context, root, hc.getInterfacePackage(), hc.getDAOInterfaceName(), false);
+				generateClassFile(TEMPLATE_DAO, context, root, hc.getImplementDaoPackage(), hc.getDAOImplementName(), false);
+				generateClassFile(TEMPLATE_IDAO, context, root, hc.getDAOPackage(), hc.getDAOInterfaceName(), false);
+				if (null != monitor) monitor.worked(1);
+			}
+			else if (null != monitor) monitor.worked(3);
+			// manager's
+			if (daoGenerationEnabled && hc.canSyncDAO() && hc.canSyncManager()) {
+				context.put(PARAM_CLASS, hc);
+				if (null != monitor) {
+					if (monitor.isCanceled()) return false;
+					monitor.subTask(currentFileName + ": generating root DAO");
+					
+				}
+				generateClassFile(TEMPLATE_MNG, context, root, hc.getImplementManagerPackage(), hc.getManagerImplementName(), false);
+				generateClassFile(TEMPLATE_IMNG, context, root, hc.getManagerPackage(), hc.getManagerInterfaceName(), false);
 				if (null != monitor) monitor.worked(1);
 			}
 			else if (null != monitor) monitor.worked(3);

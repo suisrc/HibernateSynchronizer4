@@ -1,4 +1,3 @@
-import ${class.AbsoluteDAOClassName};
 import ${class.AbsoluteValueObjectClassName};
 #if ($class.ParentRoot.Id)
 import ${class.ParentRoot.Id.Property.AbsoluteClassName};

@@ -10,6 +10,7 @@ public class Constants {
 	public static final String PROP_CUSTOM_TEMPLATES_ENABLED = "CustomTemplatesEnabled";
 	public static final String PROP_GENERATION_VALUE_OBJECT_ENABLED = "ValueObjectGenerationEnabled";
 	public static final String PROP_GENERATION_DAO_ENABLED = "DAOGenerationEnabled";
+	public static final String PROP_GENERATION_MNG_ENABLED = "ManagerGenerationEnabled";
 	public static final String PROP_GENERATION_CUSTOM_ENABLED = "CustomGenerationEnabled";
 	public static final String PROP_PROJECT_SOURCE_LOCATION = "SourceLocation";
 	public static final String PROP_BASE_VO_PACKAGE_NAME = "BaseValueObjectPackageName";
@@ -21,6 +22,9 @@ public class Constants {
 	public static final String PROP_DAO_PACKAGE_NAME = "DAOPackageName";
 	public static final String PROP_DAO_PACKAGE_STYLE = "DAOPackageStyle";
 	public static final String DEFAULT_DAO_PACKAGE = "dao";
+	public static final String PROP_MNG_PACKAGE_NAME = "ManagerPackageName";
+	public static final String PROP_MNG_PACKAGE_STYLE = "ManagerPackageStyle";
+	public static final String DEFAULT_MNG_PACKAGE = "manager";
 	public static final String PROP_BASE_DAO_USE_BASE_PACKAGE = "BaseDAOUseBasePackage";
 	public static final String DEFAULT_BASE_DAO_PACKAGE = "base";
 	public static final String PROP_USE_CUSTOM_ROOT_DAO = "UseCustomRootDAO";
@@ -33,11 +37,12 @@ public class Constants {
 	public static final String PROP_CONFIGURATION_FILE = "ConfigFile";
 	public static final String PROP_SYNC = "sync";
 	public static final String PROP_SYNC_DAO = "sync-DAO";
+	public static final String PROP_SYNC_MNG = "sync-Manager";
 	public static final String PROP_SYNC_VALUE_OBJECT = "sync-VO";
 	public static final String PROP_SYNC_CUSTOM = "sync-custom";
 	
-	public static final String FILE_HS = ".hibernateSynchronizer3/config.properties";
-	public static final String FOLDER_HS = ".hibernateSynchronizer3";
+	public static final String FILE_HS = ".hibernateSynchronizer4/config.properties";
+	public static final String FOLDER_HS = ".hibernateSynchronizer4";
 	
 	public static final String PROP_VALUE_ABSOLUTE = "Absolute";
 	public static final String PROP_VALUE_RELATIVE = "Relative";

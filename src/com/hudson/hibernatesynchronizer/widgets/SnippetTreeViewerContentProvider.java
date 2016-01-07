@@ -61,6 +61,7 @@ public class SnippetTreeViewerContentProvider implements ITreeContentProvider {
 		List dao = new ArrayList();
 		List baseValueObjectPK = new ArrayList();
 		List other = new ArrayList();
+		List manager = new ArrayList();
 
 		for (Iterator i=snippets.iterator(); i.hasNext(); ) {
 			Snippet s = (Snippet) i.next();
@@ -73,12 +74,14 @@ public class SnippetTreeViewerContentProvider implements ITreeContentProvider {
 			else if (s.getName().startsWith("BaseValueObject")) baseValueObject.add(s);
 			else if (s.getName().startsWith("RootDAO")) rootDAO.add(s);
 			else if (s.getName().startsWith("DAO")) dao.add(s);
+			else if (s.getName().startsWith("Manager")) manager.add(s);
 			else other.add(s);
 		}
 
-		int size = 9 + other.size();
+		int size = 10 + other.size();
 		topLevelElements = new Object[size];
 		int index = 0;
+		topLevelElements[index++] = new Object[] {"Manager", manager};
 		topLevelElements[index++] = new Object[] {"DAO", dao};
 		topLevelElements[index++] = new Object[] {"Base DAO", baseDAO};
 		topLevelElements[index++] = new Object[] {"Root DAO", rootDAO};

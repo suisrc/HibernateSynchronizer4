@@ -32,9 +32,9 @@ import com.hudson.hibernatesynchronizer.util.Synchronizer;
 
 public class ResourceManager {
 
-	private static final String PATH_BASE = ".hibernateSynchronizer3";
-	private static final String PATH_TEMPLATES = ".hibernateSynchronizer3/templates";
-	private static final String PATH_SNIPPETS = ".hibernateSynchronizer3/snippets";
+	private static final String PATH_BASE = ".hibernateSynchronizer4";
+	private static final String PATH_TEMPLATES = ".hibernateSynchronizer4/templates";
+	private static final String PATH_SNIPPETS = ".hibernateSynchronizer4/snippets";
 	private static final String TEMPLATE_LOC = "/templates/";
 	private static final String SNIPPET_LOC = "/snippets/";
 
@@ -50,6 +50,8 @@ public class ResourceManager {
 			Synchronizer.TEMPLATE_BASE_DAO,
 			Synchronizer.TEMPLATE_DAO,
 			Synchronizer.TEMPLATE_IDAO,
+			Synchronizer.TEMPLATE_MNG,
+			Synchronizer.TEMPLATE_IMNG,
 	};
 
 	private static String[] NON_REQUIRED_TEMPLATES = {
@@ -111,6 +113,7 @@ public class ResourceManager {
 			"DAOClassDefinition",
 			"DAOImports",
 			"DAOCustomInterfaceContents",
+			"DAOInterfaceImports",
 			"BaseValueObjectPKClassDefinition",
 			"BaseValueObjectPKClassComments",
 			"BaseValueObjectPKConstructor",
@@ -123,7 +126,14 @@ public class ResourceManager {
 			"SpringCustomConfig",
 			"SpringFactoryConfig",
 			"SpringHibernateConfig",
-			"SpringHibernateProperties"
+			"SpringHibernateProperties",
+			"ManagerClassComments",
+			"ManagerClassConstructors",
+			"ManagerCustomContents",
+			"ManagerClassDefinition",
+			"ManagerImports",
+			"ManagerCustomInterfaceContents",
+			"ManagerInterfaceImports"
 	};
 
 	private static final Map resourceManagers = new HashMap();

@@ -1,5 +1,9 @@
-#if ($class.get("class-description", true))
 /**
+#if ($class.get("class-description", true))
 $!class.getJavaDoc("class-description")
- */
+ * 
 #end
+ * @author build by hibernate synchronizer 4 
+ *         build by YS.l
+ * @time ${class.Time}
+ */
