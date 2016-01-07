@@ -1,0 +1,3 @@
+import org.hibernate.Session;
+
+import ${class.AbsoluteBaseDAOClassName};

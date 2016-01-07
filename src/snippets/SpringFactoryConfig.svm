@@ -1,0 +1,7 @@
+#foreach ($class in $classes)
+#if ($class.canSyncDAO())
+	<bean id="${class.DAOClassName}" class="${class.AbsoluteDAOClassName}">
+		<property name="sessionFactory"><ref local="sessionFactory"/></property>
+	</bean>
+#end
+#end

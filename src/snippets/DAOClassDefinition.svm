@@ -1,0 +1,1 @@
+public class ${class.DAOClassName} extends ${class.BaseDAOClassName} implements ${class.AbsoluteDAOInterfaceName} {

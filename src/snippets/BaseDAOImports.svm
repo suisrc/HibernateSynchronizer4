@@ -1,0 +1,8 @@
+:Description=The import statements for the base DAO
+-
+#if ($class.ParentRoot.Id)
+import org.hibernate.Hibernate;
+#end
+import org.hibernate.Session;
+import ${class.InterfacePackage}.${class.DAOInterfaceName};
+import org.hibernate.criterion.Order;

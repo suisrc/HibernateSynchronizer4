@@ -1,0 +1,7 @@
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<!-- to override, use the "SpringDatasourceConfig" snippet in your project -->
+		<property name="driverClassName"><value>{insert class name}</value></property>
+		<property name="url"><value>{insert url}</value></property>
+		<property name="username"><value>{insert username}</value></property>
+		<property name="password"><value>{insert password}</value></property>
+	</bean>

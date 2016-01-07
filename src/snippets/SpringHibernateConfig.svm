@@ -1,0 +1,17 @@
+	<!-- Hibernate SessionFactory -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<!-- to override, use the "SpringDatasourceConfig" snippet in your project -->
+		<property name="dataSource"><ref local="dataSource"/></property>
+		<property name="mappingResources">
+			<list>
+#foreach ($document in $documents)
+				<value>${document.FilePathInProject}</value>
+#end
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+$!{snippet.SpringHibernateProperties}
+			</props>
+		</property>
+	</bean>

@@ -1,0 +1,2 @@
+				<!-- to override, use the "SpringHibernateProperties" snippet in your project -->
+				<prop key="hibernate.dialect">{enter your dialect here}</prop>

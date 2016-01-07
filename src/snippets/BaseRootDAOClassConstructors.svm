@@ -1,0 +1,5 @@
+	public _BaseRootDAO () {}
+	
+	public _BaseRootDAO (Session session) {
+		setSession(session);
+	}

@@ -1,0 +1,9 @@
+	public static ${class.DAOInterfaceName} instance;
+
+	/**
+	 * Return a singleton of the DAO
+	 */
+	public static ${class.DAOInterfaceName} getInstance () {
+		if (null == instance) instance = new ${class.DAOPackage}.${class.DAOClassName}();
+		return instance;
+	}
