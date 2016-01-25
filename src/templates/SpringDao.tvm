@@ -1,0 +1,5 @@
+:ResourceName=hibernate-dao.txt
+:ResourcePath=hibernate
+:ResourceType=R
+-
+	<bean id="${class.DaoName}" class="${class.AbsoluteDAOImplementName}"/>

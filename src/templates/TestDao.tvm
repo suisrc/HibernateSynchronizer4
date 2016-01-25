@@ -1,0 +1,31 @@
+:Description=
+:ResourceType=C
+-
+package ${package};
+
+import javax.annotation.Resource;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+
+import ${class.AbsoluteValueObjectClassName};
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {""} )
+@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
+public class Test${class.DAOInterfaceName} {
+
+	@Resource
+	private ${class.DAOInterfaceName} dao;
+	
+	@Test
+	public void testFindById() {
+		${class.ValueObjectClassName} bean = dao.findById(1);
+		Assert.assertNotNull(bean);
+	}
+
+}

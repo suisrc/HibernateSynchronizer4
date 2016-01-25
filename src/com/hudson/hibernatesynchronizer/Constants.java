@@ -38,6 +38,7 @@ public class Constants {
 	public static final String PROP_SYNC = "sync";
 	public static final String PROP_SYNC_DAO = "sync-DAO";
 	public static final String PROP_SYNC_MNG = "sync-Manager";
+	public static final String PROP_SYNC_TEST = "sync-Test";
 	public static final String PROP_SYNC_VALUE_OBJECT = "sync-VO";
 	public static final String PROP_SYNC_CUSTOM = "sync-custom";
 	

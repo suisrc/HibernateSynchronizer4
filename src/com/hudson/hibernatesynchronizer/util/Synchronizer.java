@@ -88,9 +88,14 @@ public class Synchronizer implements IWorkspaceRunnable {
 	public static final String TEMPLATE_BASE_DAO = "BaseDAO";
 	public static final String TEMPLATE_DAO = "DAO";
 	public static final String TEMPLATE_IDAO = "IDAO";
+	public static final String TEMPLATE_DAO_TEST ="TestDao";
 	public static final String TEMPLATE_SPRING_CONFIG = "SpringConfig";
 	public static final String TEMPLATE_MNG = "Manager";
 	public static final String TEMPLATE_IMNG = "IManager";
+	public static final String TEMPLATE_MNG_TEST = "TestManager";
+
+	public static final String TEMPLATE_DAO_SPRING = "SpringDao";
+	public static final String TEMPLATE_MNG_SPRING = "SpringManager";
 	
 	public static final String EXTENSION_JAVA = ".java";
 	
@@ -563,6 +568,10 @@ public class Synchronizer implements IWorkspaceRunnable {
 				}
 				generateClassFile(TEMPLATE_DAO, context, root, hc.getImplementDaoPackage(), hc.getDAOImplementName(), false);
 				generateClassFile(TEMPLATE_IDAO, context, root, hc.getDAOPackage(), hc.getDAOInterfaceName(), false);
+
+//				if( hc.canSycnTest() ) {
+//					generateClassFile(TEMPLATE_DAO_TEST, context, root, hc.getDAOPackage(), "Test" + hc.getDAOInterfaceName(), false);
+//				}
 				if (null != monitor) monitor.worked(1);
 			}
 			else if (null != monitor) monitor.worked(3);
@@ -576,18 +585,26 @@ public class Synchronizer implements IWorkspaceRunnable {
 				}
 				generateClassFile(TEMPLATE_MNG, context, root, hc.getImplementManagerPackage(), hc.getManagerImplementName(), false);
 				generateClassFile(TEMPLATE_IMNG, context, root, hc.getManagerPackage(), hc.getManagerInterfaceName(), false);
+				
+//				if( hc.canSycnTest() ) {
+//					generateClassFile(TEMPLATE_MNG_TEST, context, root, hc.getManagerPackage(), "Test" + hc.getManagerInterfaceName(), false);
+//				}
 				if (null != monitor) monitor.worked(1);
 			}
 			else if (null != monitor) monitor.worked(3);
-
+			
 			// custom templates
 			if (customGenerationEnabled && hc.canSyncCustom()) {
-				List templateLocations = ResourceManager.getInstance(javaProject.getProject()).getTemplateLocations();
-				for (Iterator i=templateLocations.iterator(); i.hasNext(); ) {
-					if (null != monitor && monitor.isCanceled()) return false;
-					TemplateLocation templateLocation = (TemplateLocation) i.next();
-					if (!generateCustomFile(templateLocation, hc, context, syncFile, force, shell)) return false;
-				}
+				generateClassFile(TEMPLATE_DAO_TEST, context, root, hc.getDAOPackage(), "Test" + hc.getDAOInterfaceName(), false);
+				generateClassFile(TEMPLATE_MNG_TEST, context, root, hc.getManagerPackage(), "Test" + hc.getManagerInterfaceName(), false);
+				generateCustomFile(TEMPLATE_DAO_SPRING, hc, context, syncFile, force, shell, root.getJavaProject().getProject());
+				generateCustomFile(TEMPLATE_MNG_SPRING, hc, context, syncFile, force, shell, root.getJavaProject().getProject());
+//				List templateLocations = ResourceManager.getInstance(javaProject.getProject()).getTemplateLocations();
+//				for (Iterator i=templateLocations.iterator(); i.hasNext(); ) {
+//					if (null != monitor && monitor.isCanceled()) return false;
+//					TemplateLocation templateLocation = (TemplateLocation) i.next();
+//					if (!generateCustomFile(templateLocation, hc, context, syncFile, force, shell)) return false;
+//				}
 			}
 		}
 		catch( Exception e )
@@ -699,6 +716,47 @@ public class Synchronizer implements IWorkspaceRunnable {
 		}
 		catch (Exception e) {
 			MessageDialog.openWarning(null, "An error has occured while creating custom template: " + templateLocation.getTemplate().getName(), e.getMessage());
+		}
+		return true;
+	}
+	/**
+	 * Write the contents that relate to the given TemplateLocation Template
+	 * @param templateLocation the template location
+	 * @param hibernateClass the current HibernateClass that the generation relates to
+	 * @param context the Velocity context
+	 * @param syncFile the current IFile that being synchronized
+	 * @param force true to overwrite even if the templateLocation is not set to overwrite
+	 * @return true to keep processing and false to stop
+	 */
+	private boolean generateCustomFile (
+			String templateName,
+			HibernateClass hibernateClass,
+			Context context,
+			IFile syncFile,
+			boolean force,
+			Shell shell,
+			IProject project) {
+		context.remove(PARAM_CUSTOM_PLACEHOLDER);
+		Template template = ResourceManager.getInstance(project).getTemplate(templateName);
+		try {
+			String fileName = template.getFileNameA();
+			// output is a resource file
+			String pathName = template.getFilePathA();
+			context.put(PARAM_PATH, pathName);
+			context.put(PARAM_FILE_NAME, fileName);
+			String content = template.merge(context);
+			context.remove(PARAM_PATH);
+			context.remove(PARAM_FILE_NAME);
+			int rtn = checkContents(content, syncFile, context);
+			if (rtn == DIRECTIVE_KEEP_PROCESSING) {
+				writeResourceFileA(content, pathName, fileName, project);
+			}
+			else if (rtn == DIRECTIVE_STOP_PROCESSING_GLOBAL) {
+				return false;
+			}
+		}
+		catch (Exception e) {
+			MessageDialog.openWarning(null, "An error has occured while creating custom template: " + template.getName(), e.getMessage());
 		}
 		return true;
 	}
@@ -962,6 +1020,54 @@ public class Synchronizer implements IWorkspaceRunnable {
 			}
 			if (null != existingContent && existingContent.equals(content)) return false;
 			else {
+				file.setContents(new ByteArrayInputStream(content.getBytes()), true, true, null);
+				return true;
+			}
+		}
+	}
+
+	/**
+	 * Write the given contents to the file described by the path and file name for the given project.
+	 * If the file already exists and the contents are the same as the ones given, do nothing and return false.
+	 * @param content the new file contents
+	 * @param path the file path without the file name
+	 * @param fileName the file name
+	 * @param project
+	 * @return true if the file was written and false if not
+	 * @throws CoreException
+	 */
+	public boolean writeResourceFileA (
+			String content,
+			String path,
+			String fileName,
+			IProject project) throws CoreException, IOException {
+		IFile file = project.getFile(path + "/" + fileName);
+		if (!file.exists()) {
+			StringTokenizer st = new StringTokenizer(path, "/");
+			// make sure the directory exists
+			StringBuffer sb = new StringBuffer();
+			while (st.hasMoreTokens()) {
+				if (sb.length() > 0) sb.append('/');
+				sb.append(st.nextToken());
+				IFolder folder = project.getFolder(sb.toString());
+				if (!folder.exists()) folder.create(false, true, null);
+			}
+			file.create(new ByteArrayInputStream(content.getBytes()), true, null);
+			return true;
+		}
+		else {
+			String existingContent = null;
+			try {
+				existingContent = HSUtil.getStringFromStream(file.getContents());
+			}
+			catch (ResourceException re) {
+				// possible not refreshed
+				file.refreshLocal(IResource.DEPTH_ONE, null);
+				existingContent = HSUtil.getStringFromStream(file.getContents());
+			}
+			if (null != existingContent && existingContent.contains(content)) return false;
+			else {
+				content = existingContent + "\n" + content;
 				file.setContents(new ByteArrayInputStream(content.getBytes()), true, true, null);
 				return true;
 			}

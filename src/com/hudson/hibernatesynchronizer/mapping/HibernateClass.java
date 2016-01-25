@@ -71,6 +71,7 @@ public class HibernateClass extends BaseElement implements Comparable {
 	
 	private boolean syncDAO = true;
 	private boolean syncManager = true;
+	private boolean syncTest = false;
 	private boolean syncValueObject = true;
 	private boolean syncCustom = true;
 	private int type;
@@ -165,6 +166,8 @@ public class HibernateClass extends BaseElement implements Comparable {
 								scope = value;
 							} else if(key.equals(Constants.PROP_SYNC_MNG) && value.toUpperCase().startsWith("F")) {
 								syncManager = false;
+							} else if(key.equals(Constants.PROP_SYNC_TEST) && value.toUpperCase().startsWith("T")) {
+								syncTest = true;
 							}
 						}
 					}
@@ -772,6 +775,13 @@ public class HibernateClass extends BaseElement implements Comparable {
 	 */
 	public boolean canSyncManager() {
 		return syncManager;
+	}
+	
+	/**
+	 * @return true if this class is been allowed to auto-sync the related Manager class and false if not 
+	 */
+	public boolean canSycnTest() {
+		return syncTest;
 	}
 
 	/**

@@ -17,10 +17,16 @@ public class Template extends AbstractResource {
 	private static final String PROP_RESOURCE_TYPE = "ResourceType";
 	private static final String PROP_JAVA_CLASS = "JavaClass";
 	
+	private static final String PROP_RESOURCE_NAME = "ResourceName";
+	private static final String PROP_RESOURCE_PATH = "ResourcePath";
+	
 	public static final String TYPE_CLASS = "C";
 	public static final String TYPE_RESOURCE = "R";
 	
 	private String type;
+	
+	private String fileName = null;
+	private String filePath = null;
 
 	/**
 	 * @see com.hudson.hibernatesynchronizer.resource.Resource#addToEditor(org.eclipse.swt.widgets.Composite)
@@ -52,6 +58,8 @@ public class Template extends AbstractResource {
 	 */
 	protected void evaluateMetaData(Properties properties) {
 		type = properties.getProperty(PROP_RESOURCE_TYPE);
+		fileName = properties.getProperty(PROP_RESOURCE_NAME);
+		filePath = properties.getProperty(PROP_RESOURCE_PATH);
 	}
 
 	/**
@@ -82,5 +90,13 @@ public class Template extends AbstractResource {
 	}
 	protected String getFileExtension() {
 		return Constants.EXTENSION_TEMPLATE;
+	}
+	
+	public String getFileNameA() {
+		return fileName;
+	}
+	
+	public String getFilePathA() {
+		return filePath;
 	}
 }

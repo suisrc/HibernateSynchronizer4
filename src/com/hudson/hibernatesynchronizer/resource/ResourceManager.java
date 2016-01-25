@@ -51,11 +51,15 @@ public class ResourceManager {
 			Synchronizer.TEMPLATE_DAO,
 			Synchronizer.TEMPLATE_IDAO,
 			Synchronizer.TEMPLATE_MNG,
-			Synchronizer.TEMPLATE_IMNG,
+			Synchronizer.TEMPLATE_IMNG
 	};
 
 	private static String[] NON_REQUIRED_TEMPLATES = {
 		Synchronizer.TEMPLATE_SPRING_CONFIG,
+		Synchronizer.TEMPLATE_DAO_TEST,
+		Synchronizer.TEMPLATE_MNG_TEST,
+		Synchronizer.TEMPLATE_DAO_SPRING,
+		Synchronizer.TEMPLATE_MNG_SPRING
 	};
 
 	private static String[] ALL_SNIPPETS = {
